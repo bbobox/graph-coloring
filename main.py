@@ -1,7 +1,9 @@
+#-*- coding: utf-8 -*-
+
 from graph import *
 import sys
 
-file = open("test.txt", "r") #chemin du fichier
+file = open("dsjc250.5.col", "r") #chemin du fichier
 
 
 def createGraph(file):
@@ -23,8 +25,11 @@ def createGraph(file):
 
 if( len(sys.argv)>1):
     g = createGraph(open(sys.argv[1], "r"))
-    g.print()
+    #g.glouton_coloration()
+    g.greedy_k_equitable(10);
+    #g.size_color_class()
+    #print(g.max_degree())
 else:
     g = createGraph(file)
-    g.print()
+    #g.glouton_coloration()
     
