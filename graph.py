@@ -3,7 +3,7 @@
 
 class Graph:
     """
-    Represente un graphe non orienté, representé par une matrice d'adjascence
+    Represente un graphe non orienté, representé par une liste d'adjascence
     ou une liste d'adjascence
     n:  le nombre de sommet du graphe
     m: le nombre d'arret du graphe
@@ -170,10 +170,18 @@ class Graph:
                 self.coloration[V_max[0]] = self.c
                 class_color_size = self.size_color_class()
             cpt=cpt+1
+        print(len(class_color_size))
 
 
 
 
+    def is_edge(self,i,j):
+        """
+        verifie s'il existe une arrete entre les sommet i et j du graphe
+        :param j:
+        :return:
+        """
+        return ( (j in(self.g[i])) or (i in(self.g[j])) )
 
 
 

@@ -1,6 +1,9 @@
 #-*- coding: utf-8 -*-
 
 from graph import *
+from random import *
+from gcp_local_search import *
+from ecp_ls import *
 import sys
 
 file = open("dsjc250.5.col", "r") #chemin du fichier
@@ -26,10 +29,11 @@ def createGraph(file):
 if( len(sys.argv)>1):
     g = createGraph(open(sys.argv[1], "r"))
     #g.glouton_coloration()
-    g.greedy_k_equitable(10);
-    #g.size_color_class()
-    #print(g.max_degree())
+    g.greedy_k_equitable(10)
 else:
     g = createGraph(file)
-    #g.glouton_coloration()
-    
+    #g.greedy_k_equitable(10)
+    t = TabuCol(g,7)
+    t2 = TabuEqcol(g,7)
+    k = 50
+    #print(t2.compute_solution(k,200,0.7,10))
