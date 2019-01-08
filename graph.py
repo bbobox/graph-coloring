@@ -1,5 +1,6 @@
 #-*- coding: utf-8 -*-
 
+import threading
 
 class Graph:
     """
@@ -24,6 +25,9 @@ class Graph:
         self.g[i].append(j)
         self.g[j].append(i)
         self.m+=1
+
+    def set_n(self,val):
+        self.__init__(val)
 
 
     def print(self):
@@ -182,6 +186,12 @@ class Graph:
         :return:
         """
         return ( (j in(self.g[i])) or (i in(self.g[j])) )
+
+
+
+
+
+
 
 
 

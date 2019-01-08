@@ -1,5 +1,7 @@
 from random import *
 import copy
+import threading
+
 
 
 class TabuCol:
@@ -58,7 +60,7 @@ class TabuCol:
         return N
 
 
-    def compte_solution(self,k,max,alpha, Beta):
+    def compute_solution(self,k,alpha, Beta):
         """
 
         :param k:
@@ -68,19 +70,23 @@ class TabuCol:
         :return:
         """
         self.live = []
+        self.tabu_list=[]
         for i in range(self.g.n):
             self.live.append(k*[0])
         s0= initial_solution(k,self.g) #Initial_solution
         #print(s0)
         currentS=copyMatrix(s0)
         bestS= copyMatrix(s0)
-        time=0
-
-        while(self.f(currentS)!=0 and time<max):
+        ok=False
+        global encore
+        while(self.f(currentS)!=0 and encore ):
           #  print("time =",time)
             for f in self.tabu_list:
                     v = f[0] # vertex v
                     c = f[1] # color c
+                    #print(self.live[v][c])
+                    if(v>self.g.n-1 or c>k-1):
+                        print(v, c)
                     self.live[v][c] =self.live[v][c]-1
                     if self.live[v][c]<=0:
                         self.tabu_list.remove(f)
@@ -91,11 +97,38 @@ class TabuCol:
                 currentS= self.getbest_solution(neighborhood)
                 if self.f(currentS)<self.f(bestS):
                     bestS=copyMatrix(currentS)
-            time=time+1
         return  (bestS,self.f(bestS))
 
 
 
+    def search_minimum_coloring(self,alpha,Beta):
+        """
+        Rechrcherche coloration avec K minimal
+        :return:
+        """
+        bestSol=[]
+        bestK=0
+        k= self.g.n
+        iter = 0
+        global encore
+        encore = True
+        timer = threading.Timer(200, findeboucle)
+        timer.start()
+        while(encore):
+            tabus_search = self.compute_solution(k,alpha,Beta)
+            if(tabus_search[1]==0):
+                bestSol= copyMatrix(tabus_search[0])
+                #tmax=tabus_search[2]
+                bestK=k
+                k=k-1
+        return(bestK,bestSol)
+
+
+
+
+def findeboucle():
+    global encore
+    encore = False
 
 
 

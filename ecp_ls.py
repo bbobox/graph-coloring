@@ -1,6 +1,6 @@
 from random import *
 import copy
-
+import threading
 
 
 class TabuEqcol:
@@ -51,7 +51,6 @@ class TabuEqcol:
 
         n = G.n
         r = n - k * (n // k)
-        print(n, n // k)
         rr = 0
 
         while (vertices != []):
@@ -136,7 +135,8 @@ class TabuEqcol:
 
         return N
 
-    def compute_solution(self,k,max,alpha, Beta):
+
+    def compute_solution(self,k,alpha, Beta):
         """
         Application de la la methode Taboue de recherche locale
         :param k:
@@ -146,14 +146,14 @@ class TabuEqcol:
         :return:
         """
         self.live = []
+        self.tabu_list = []
         for i in range(self.g.n):
             self.live.append(k * [0])
         s0 =  copyMatrix(self.initial_solutionECp(k, self.g)) # Initial_solution
         currentS = copyMatrix(s0)
         bestS = copyMatrix(s0)
-        time = 0
-        while (self.f(currentS) != 0 and time < max):
-            print("time =", time)
+        global encore
+        while (self.f(currentS)!= 0 and encore):
             for f in self.tabu_list:
                     v = f[0] # vertex v
                     c = f[1] # color c
@@ -170,9 +170,34 @@ class TabuEqcol:
                 currentS = self.getbest_solution(neighborhood)
                 if self.f(currentS) < self.f(bestS):
                     bestS = copyMatrix(currentS)
-            time = time + 1
         return (bestS, self.f(bestS))
 
+
+    def search_minimum_coloring(self,alpha,Beta,time):
+        """
+        Rechrcherche coloration avec K minimal
+        :return:
+        """
+        bestSol=[]
+        bestK=0
+        k= self.g.n
+        iter = 0
+        global encore
+        encore = True
+        timer = threading.Timer(time, findeboucle)
+        timer.start()
+        while(encore):
+            tabus_search = self.compute_solution(k,alpha,Beta)
+            if(tabus_search[1]==0):
+                bestSol= copyMatrix(tabus_search[0])
+                #tmax=tabus_search[2]
+                bestK=k
+                k=k-1
+        return(bestK,bestSol)
+
+def findeboucle():
+    global encore
+    encore = False
 
 
 
@@ -239,8 +264,6 @@ def copyMatrix(M1):
     for i in range(len(M1)):
         M.append(M1[i][:])
     return M
-
-
 
 def get_colorof(v, S):
     for i in range(len(S)):
