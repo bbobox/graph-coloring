@@ -11,10 +11,14 @@ class Graph:
     """
     def __init__(self,n):
         self.g = []
-        for i in range(0,n+1):
+        for i in range(0,n):
             self.g.append([])
         self.n = n
         self.m = 0
+        self.adjacency_matrix=[]
+        for i in range(0,n):
+            self.adjacency_matrix.append(n*[0])
+
         self.coloration = (self.n+1)*[0]
         self.c = 1
 
@@ -24,6 +28,8 @@ class Graph:
         """
         self.g[i].append(j)
         self.g[j].append(i)
+        self.adjacency_matrix[i][j]=1
+        self.adjacency_matrix[j][i]=1
         self.m+=1
 
     def set_n(self,val):
@@ -185,7 +191,8 @@ class Graph:
         :param j:
         :return:
         """
-        return ( (j in(self.g[i])) or (i in(self.g[j])) )
+        #return ( (j in(self.g[i])) or (i in(self.g[j])) )
+        return (self.adjacency_matrix[i][j]==1 or self.adjacency_matrix[j][i]==1)
 
 
 
