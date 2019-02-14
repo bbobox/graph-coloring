@@ -2,12 +2,16 @@
 
 from graph import *
 from random import *
-from gcp_local_search import *
 from ecp_ls import *
 import sys
 import threading
 
-file_path= "r125.1.col"
+# import the necessary packages
+import argparse
+
+
+import sys, getopt, distutils
+from distutils.util import strtobool
 
 def createGraph(file):
     """
@@ -27,8 +31,8 @@ def createGraph(file):
     return graph
 
 
-def coloring_and_out(input_file_path,output_filepath,timemax):
-     with open(input_file_path, 'r') as fin:
+def coloring_and_out(file,timemax):
+     with open(file,'r') as fin:
         g=createGraph(fin)
         t = TabuEqCol(g, 7)
         coloring = t.search_minimum_coloring(0.9, 5, timemax)
@@ -36,18 +40,30 @@ def coloring_and_out(input_file_path,output_filepath,timemax):
         colors = ""
         for i in range(0, g.n):
              colors = colors + (str(get_colorof(i, coloring.colorSet))) + "  "
-        f = open("output_files_3600/"+output_filepath+".out", "w")
+        f = open(file+".out", "w")
         f.write("K=" + str(len(coloring.colorSet)) + "\n")
         f.write(colors)
         f.close()
 
 
-if( len(sys.argv)>1):
-    n= len(sys.argv)
-    files=[]
-    for i in range(1,n):
-        g = createGraph(open(sys.argv[i], "r"))
-        coloring_and_out(sys.argv[i], sys.argv[i], 3600)
-else:
-    print("aucun fichier en paramètre")
-    #coloring_and_out(file_path,file_path,5)
+inputfile = ''
+time=0
+try:
+  opts, args = getopt.getopt(sys.argv[1:], "i:t:h", ["inputfile=","time=" "help"])
+except getopt.GetoptError:
+    sys.exit(2)
+    print('usage: main.py -i <inputfile> -t <time>')
+for opt, arg in opts:
+    if opt in ("-i", "--inputfile"):
+      inputfile = arg
+    elif opt in ("-t", "--time"):
+        try:
+            time = int(arg)
+            print(time)
+        except ValueError: print("-running time have integer value !")
+
+if inputfile=='' or time==0:
+    print('usage: main.py -i <inputfile> -t <time>')
+    sys.exit(2)
+g = createGraph(open(inputfile, "r"))
+coloring_and_out( inputfile, time)
